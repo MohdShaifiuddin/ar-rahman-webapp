@@ -1,0 +1,5 @@
+{
+  "name": "Ar-Rahman Academy",
+  "description": "Online Islamic education platform offering personalized one-on-one Qur’an learning with expert teachers.",
+  "requestFramePermissions": ["geolocation"]
+}

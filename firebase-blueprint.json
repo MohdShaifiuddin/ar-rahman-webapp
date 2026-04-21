@@ -1,0 +1,103 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "User Profile",
+      "description": "Stores user information and roles.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "description": "The unique identifier for the user." },
+        "email": { "type": "string", "format": "email", "description": "The user's email address." },
+        "displayName": { "type": "string", "description": "The user's display name." },
+        "role": { "type": "string", "enum": ["student", "teacher", "admin"], "description": "The user's role in the application." },
+        "enrolledCourses": { "type": "array", "items": { "type": "string" }, "description": "List of course IDs the student is enrolled in." },
+        "emailPreferences": {
+          "type": "object",
+          "properties": {
+            "reminders": { "type": "boolean", "description": "Whether to receive study reminders via email." },
+            "announcements": { "type": "boolean", "description": "Whether to receive academy announcements via email." }
+          },
+          "description": "User's email notification preferences."
+        },
+        "hasCompletedOnboarding": { "type": "boolean", "description": "Whether the user has completed the onboarding flow." }
+      },
+      "required": ["uid", "email", "role"]
+    },
+    "CourseProgress": {
+      "title": "Course Progress",
+      "description": "Tracks a student's progress in a specific course.",
+      "type": "object",
+      "properties": {
+        "studentId": { "type": "string", "description": "The UID of the student." },
+        "courseId": { "type": "string", "description": "The ID of the course." },
+        "completedModules": { "type": "array", "items": { "type": "string" }, "description": "List of completed module/lesson IDs." },
+        "lastUpdated": { "type": "string", "format": "date-time", "description": "The last time the progress was updated." }
+      },
+      "required": ["studentId", "courseId", "completedModules"]
+    },
+    "StudyReminder": {
+      "title": "Study Reminder",
+      "description": "A personalized study reminder for a student.",
+      "type": "object",
+      "properties": {
+        "studentId": { "type": "string", "description": "The UID of the student." },
+        "courseId": { "type": "string", "description": "The ID of the course." },
+        "moduleId": { "type": "string", "description": "The ID of the module." },
+        "reminderTime": { "type": "string", "format": "date-time", "description": "The scheduled time for the reminder." },
+        "message": { "type": "string", "description": "Optional reminder message." },
+        "isNotified": { "type": "boolean", "description": "Whether the user has been notified." }
+      },
+      "required": ["studentId", "courseId", "moduleId", "reminderTime"]
+    },
+    "Assignment": {
+      "title": "Assignment",
+      "description": "A homework or assignment created by a teacher for a course.",
+      "type": "object",
+      "properties": {
+        "courseId": { "type": "string", "description": "The ID of the course." },
+        "title": { "type": "string", "description": "The title of the assignment." },
+        "description": { "type": "string", "description": "The detailed instructions for the assignment." },
+        "dueDate": { "type": "string", "format": "date-time", "description": "The deadline for the assignment." },
+        "teacherId": { "type": "string", "description": "The UID of the teacher who created it." },
+        "createdAt": { "type": "string", "format": "date-time", "description": "When the assignment was created." }
+      },
+      "required": ["courseId", "title", "description", "dueDate", "teacherId", "createdAt"]
+    },
+    "Submission": {
+      "title": "Submission",
+      "description": "A student's submission for an assignment.",
+      "type": "object",
+      "properties": {
+        "assignmentId": { "type": "string", "description": "The ID of the assignment." },
+        "studentId": { "type": "string", "description": "The UID of the student." },
+        "content": { "type": "string", "description": "The content of the submission (text or link)." },
+        "submittedAt": { "type": "string", "format": "date-time", "description": "When the submission was made." },
+        "status": { "type": "string", "enum": ["pending", "reviewed"], "description": "The status of the submission." },
+        "feedback": { "type": "string", "description": "Teacher's feedback." },
+        "grade": { "type": "string", "description": "Optional grade or score." }
+      },
+      "required": ["assignmentId", "studentId", "content", "submittedAt", "status"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "Collection of user profiles."
+    },
+    "/progress/{progressId}": {
+      "schema": "CourseProgress",
+      "description": "Collection of course progress records. progressId is usually studentId_courseId."
+    },
+    "/reminders/{reminderId}": {
+      "schema": "StudyReminder",
+      "description": "Collection of personalized study reminders."
+    },
+    "/assignments/{assignmentId}": {
+      "schema": "Assignment",
+      "description": "Collection of course assignments."
+    },
+    "/submissions/{submissionId}": {
+      "schema": "Submission",
+      "description": "Collection of student submissions."
+    }
+  }
+}
